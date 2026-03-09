@@ -2,7 +2,7 @@
   "name": "agent-toolkit-root",
   "version": "0.0.1",
   "private": true,
-  "description": "Monorepo root for @byrde/agent-toolkit",
+  "description": "Configure MCP servers and generate intelligent agent instructions for any AI coding client",
   "workspaces": [
     "packages/*"
   ],
