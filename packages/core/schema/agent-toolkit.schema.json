@@ -1,0 +1,232 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/badal/agent-toolkit/schema/agent-toolkit.json",
+  "title": "Agent Toolkit Workspace Config",
+  "description": "Declarative configuration for MCP servers and agent instructions scoped to a project directory.",
+  "type": "object",
+  "properties": {
+    "servers": {
+      "type": "object",
+      "description": "MCP servers to configure, keyed by server name.",
+      "properties": {
+        "github": { "$ref": "#/definitions/GitHubServerDeclaration" },
+        "gcp": { "$ref": "#/definitions/GcpServerDeclaration" },
+        "terraform": { "$ref": "#/definitions/TerraformServerDeclaration" },
+        "atlassian": { "$ref": "#/definitions/AtlassianServerDeclaration" }
+      },
+      "additionalProperties": {
+        "$ref": "#/definitions/ServerDeclaration"
+      }
+    },
+    "instructions": {
+      "$ref": "#/definitions/InstructionPreferences"
+    }
+  },
+  "required": ["servers"],
+  "additionalProperties": false,
+  "definitions": {
+    "ServerDeclaration": {
+      "type": "object",
+      "description": "Configuration for a single MCP server.",
+      "properties": {
+        "toolsets": {
+          "type": "array",
+          "description": "Which toolsets to enable (server-specific).",
+          "items": { "type": "string" },
+          "uniqueItems": true
+        },
+        "settings": {
+          "type": "object",
+          "description": "Server-specific settings including scoping, workflow hints, and usage notes.",
+          "additionalProperties": true
+        },
+        "command": {
+          "type": "string",
+          "description": "Override the default MCP server command."
+        },
+        "args": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Arguments for the command."
+        },
+        "env": {
+          "type": "object",
+          "description": "Environment variables for the server process.",
+          "additionalProperties": { "type": "string" }
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "Remote URL for HTTP+SSE transport servers."
+        }
+      },
+      "additionalProperties": false
+    },
+    "GitHubServerDeclaration": {
+      "allOf": [
+        { "$ref": "#/definitions/ServerDeclaration" },
+        {
+          "properties": {
+            "settings": {
+              "type": "object",
+              "properties": {
+                "organization": {
+                  "type": "string",
+                  "description": "GitHub organization the agent should work within."
+                },
+                "repositories": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "GitHub repositories the agent should focus on."
+                },
+                "ci": {
+                  "type": "boolean",
+                  "description": "Whether GitHub Actions CI is used."
+                },
+                "codeReview": {
+                  "type": "boolean",
+                  "description": "Whether GitHub PRs are used for code review."
+                },
+                "issueTracker": {
+                  "type": "string",
+                  "description": "Where issues are tracked.",
+                  "enum": ["github", "jira"]
+                },
+                "usageNotes": {
+                  "type": "string",
+                  "description": "Free-form usage notes for the AI agent."
+                }
+              },
+              "additionalProperties": true
+            }
+          }
+        }
+      ]
+    },
+    "GcpServerDeclaration": {
+      "allOf": [
+        { "$ref": "#/definitions/ServerDeclaration" },
+        {
+          "properties": {
+            "settings": {
+              "type": "object",
+              "properties": {
+                "projects": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "GCP project IDs the agent should work within."
+                },
+                "region": {
+                  "type": "string",
+                  "description": "Default GCP region."
+                },
+                "services": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "GCP services in use (e.g., cloud-run, gke, cloud-sql)."
+                },
+                "usageNotes": {
+                  "type": "string",
+                  "description": "Free-form usage notes for the AI agent."
+                }
+              },
+              "additionalProperties": true
+            }
+          }
+        }
+      ]
+    },
+    "TerraformServerDeclaration": {
+      "allOf": [
+        { "$ref": "#/definitions/ServerDeclaration" },
+        {
+          "properties": {
+            "settings": {
+              "type": "object",
+              "properties": {
+                "organization": {
+                  "type": "string",
+                  "description": "Terraform Cloud/Enterprise organization."
+                },
+                "projects": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Terraform Cloud projects the agent should work within."
+                },
+                "workspaces": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Terraform workspaces the agent should work within."
+                },
+                "backend": {
+                  "type": "string",
+                  "description": "State backend type.",
+                  "enum": ["gcs", "s3", "azurerm", "remote", "local"]
+                },
+                "ci": {
+                  "type": "string",
+                  "description": "CI system that runs Terraform.",
+                  "enum": ["github-actions", "gitlab-ci", "cloud-build"]
+                },
+                "stateUrl": {
+                  "type": "string",
+                  "description": "Direct URL to the state backend (e.g., GCS bucket URL)."
+                },
+                "usageNotes": {
+                  "type": "string",
+                  "description": "Free-form usage notes for the AI agent."
+                }
+              },
+              "additionalProperties": true
+            }
+          }
+        }
+      ]
+    },
+    "AtlassianServerDeclaration": {
+      "allOf": [
+        { "$ref": "#/definitions/ServerDeclaration" },
+        {
+          "properties": {
+            "settings": {
+              "type": "object",
+              "properties": {
+                "site": {
+                  "type": "string",
+                  "description": "Atlassian site hostname (e.g., myteam.atlassian.net)."
+                },
+                "projects": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Jira project keys relevant to this repo."
+                },
+                "usageNotes": {
+                  "type": "string",
+                  "description": "Free-form usage notes for the AI agent."
+                }
+              },
+              "additionalProperties": true
+            }
+          }
+        }
+      ]
+    },
+    "InstructionPreferences": {
+      "type": "object",
+      "description": "Controls which canonical agent instructions are included.",
+      "properties": {
+        "include": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Instruction sets to include. Empty or omitted = all."
+        },
+        "exclude": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Instruction sets to exclude."
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

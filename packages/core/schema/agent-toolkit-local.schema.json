@@ -1,0 +1,74 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/badal/agent-toolkit/schema/agent-toolkit-local.json",
+  "title": "Agent Toolkit Local Config",
+  "description": "Per-developer, gitignored configuration for pinning provider identities in a project. Place as .agent-toolkit.local.json in the project root.",
+  "type": "object",
+  "properties": {
+    "identity": {
+      "type": "object",
+      "description": "Pin which account/identity to validate per provider. Keys must match a server declared in .agent-toolkit.json.",
+      "properties": {
+        "github": { "$ref": "#/definitions/GitHubIdentity" },
+        "gcp": { "$ref": "#/definitions/GcpIdentity" },
+        "terraform": { "$ref": "#/definitions/TerraformIdentity" },
+        "atlassian": { "$ref": "#/definitions/AtlassianIdentity" }
+      },
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": false,
+  "definitions": {
+    "GitHubIdentity": {
+      "type": "object",
+      "description": "Expected GitHub identity for this project.",
+      "properties": {
+        "account": {
+          "type": "string",
+          "description": "GitHub username expected to be authenticated (e.g., 'octocat')."
+        }
+      },
+      "additionalProperties": false
+    },
+    "GcpIdentity": {
+      "type": "object",
+      "description": "Expected GCP identity for this project.",
+      "properties": {
+        "account": {
+          "type": "string",
+          "description": "GCP account email expected to be active (e.g., 'user@example.com')."
+        }
+      },
+      "additionalProperties": false
+    },
+    "TerraformIdentity": {
+      "type": "object",
+      "description": "Expected Terraform Cloud identity for this project.",
+      "properties": {
+        "host": {
+          "type": "string",
+          "description": "Terraform Cloud/Enterprise host to authenticate against (e.g., 'app.terraform.io')."
+        },
+        "email": {
+          "type": "string",
+          "description": "Terraform Cloud account email expected to be authenticated (e.g., 'user@example.com')."
+        }
+      },
+      "additionalProperties": false
+    },
+    "AtlassianIdentity": {
+      "type": "object",
+      "description": "Expected Atlassian identity for this project.",
+      "properties": {
+        "email": {
+          "type": "string",
+          "description": "Atlassian email expected in ATLASSIAN_EMAIL (e.g., 'user@example.com')."
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

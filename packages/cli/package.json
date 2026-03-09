@@ -1,0 +1,49 @@
+{
+  "name": "@byrde/agent-toolkit",
+  "version": "0.1.0",
+  "description": "Configure MCP servers and generate intelligent agent instructions for any AI coding client",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "agent-toolkit": "./dist/main.js"
+  },
+  "main": "./dist/main.js",
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/badal-io/platform-agent-toolkit.git",
+    "directory": "packages/cli"
+  },
+  "keywords": [
+    "mcp",
+    "ai",
+    "agent",
+    "cursor",
+    "claude",
+    "copilot",
+    "codex",
+    "gemini"
+  ],
+  "scripts": {
+    "build": "tsc --build",
+    "clean": "rm -rf dist *.tsbuildinfo",
+    "typecheck": "tsc --noEmit",
+    "test": "find src -name '*.test.ts' | xargs node --import tsx --test"
+  },
+  "dependencies": {
+    "@byrde/agent-toolkit-core": "*",
+    "@inquirer/prompts": "^8.3.0",
+    "commander": "^13.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0"
+  }
+}

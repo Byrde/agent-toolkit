@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          registry-url: "https://registry.npmjs.org"
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run build
+      - run: npm test
+
+  semantic-release:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    outputs:
+      version: ${{ steps.release.outputs.version }}
+    steps:
+      - name: Create Release
+        id: release
+        uses: Byrde/github-reusable-workflows/actions/semantic-release@main
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          should-create-release: 'true'
+
+  publish:
+    needs: semantic-release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          registry-url: "https://registry.npmjs.org"
+      - run: npm ci
+      - run: npm run build
+      - name: Version packages
+        run: |
+          VERSION=${{ needs.semantic-release.outputs.version }}
+          npm version "$VERSION" --no-git-tag-version --workspace packages/core
+          npm version "$VERSION" --no-git-tag-version --workspace packages/cli
+      - name: Publish @byrde/agent-toolkit-core
+        run: npm publish --provenance --workspace packages/core
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Publish @byrde/agent-toolkit
+        run: npm publish --provenance --workspace packages/cli
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

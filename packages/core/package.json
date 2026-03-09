@@ -1,0 +1,43 @@
+{
+  "name": "@byrde/agent-toolkit-core",
+  "version": "0.1.0",
+  "description": "Shared logic: Context Resolver, Config Loaders, Auth Checkers",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "schema"
+  ],
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/badal-io/platform-agent-toolkit.git",
+    "directory": "packages/core"
+  },
+  "scripts": {
+    "build": "tsc --build",
+    "clean": "rm -rf dist *.tsbuildinfo",
+    "typecheck": "tsc --noEmit",
+    "test": "find src -name '*.test.ts' | xargs node --import tsx --test"
+  },
+  "devDependencies": {
+    "tsx": "^4.21.0",
+    "typescript": "^5.7.0"
+  },
+  "dependencies": {
+    "smol-toml": "^1.6.0"
+  }
+}

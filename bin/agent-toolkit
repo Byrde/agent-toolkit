@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+TOOLKIT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+TSX="$TOOLKIT_DIR/node_modules/.bin/tsx"
+
+if [ ! -x "$TSX" ]; then
+  echo "error: tsx not found. Run 'npm install' inside $TOOLKIT_DIR first." >&2
+  exit 1
+fi
+
+needs_build() {
+  local pkg="$1"
+  local dist="$pkg/dist"
+  [ ! -d "$dist" ] && return 0
+  local newest_src newest_dist
+  newest_src=$(find "$pkg/src" -name '*.ts' -newer "$dist" 2>/dev/null | head -1)
+  [ -n "$newest_src" ]
+}
+
+for pkg in "$TOOLKIT_DIR"/packages/core "$TOOLKIT_DIR"/packages/cli; do
+  if needs_build "$pkg"; then
+    "$TSX" "$TOOLKIT_DIR/node_modules/.bin/tsc" --build "$pkg/tsconfig.json" 2>/dev/null || true
+  fi
+done
+
+exec "$TSX" "$TOOLKIT_DIR/packages/cli/src/main.ts" "$@"
