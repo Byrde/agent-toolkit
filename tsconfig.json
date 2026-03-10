@@ -17,5 +17,10 @@
     "outDir": "dist",
     "rootDir": "src"
   },
+  "references": [
+    { "path": "packages/core" },
+    { "path": "packages/cli" }
+  ],
+  "files": [],
   "exclude": ["node_modules", "dist"]
 }
