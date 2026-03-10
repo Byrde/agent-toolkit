@@ -24,7 +24,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/badal-io/platform-agent-toolkit.git",
+    "url": "https://github.com/Byrde/agent-toolkit.git",
     "directory": "packages/core"
   },
   "scripts": {
