@@ -1,4 +1,4 @@
-# Agent Toolkit
+# @byrde/agent-toolkit
 
 [![npm](https://img.shields.io/npm/v/@byrde/agent-toolkit)](https://www.npmjs.com/package/@byrde/agent-toolkit)
 [![license](https://img.shields.io/npm/l/@byrde/agent-toolkit)](./LICENSE)
